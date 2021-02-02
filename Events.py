@@ -31,7 +31,19 @@ def location(area):
         print(f'Your health: {you.current_health}/{you.max_health}')
 
     if area == "Camp":
-        print("You have arrived at your camp.")
+        print("You are at the camp.\n")
+        location(choice_sequence(intro='What would you like to do next?\n',
+                                 choices=['Leave camp', 'Save your progress', 'See your inventory', 'Rest'],
+                                 results=['Wilds: 1', 'Save Screen', 'Inventory Screen', 'Rest']))
+
+    # Your general non-base area
+    if area == "Wilds: 1":
+        location(choice_sequence(intro='You are in the wilds.\n',
+                                 choices=['Look for a fight.', 'Go to camp', 'Explore'],
+                                 results=['Fight Zone: 1', 'Camp', 'Wilds: 1']))
+
+    # Rest area
+    if area == 'Rest':
         if you.current_health == you.max_health:
             print("You are healthy and well. There is currently no need to rest.")
         elif 2 / 3 < you.current_health / you.max_health < 1:
@@ -51,20 +63,11 @@ def location(area):
             rest_time()
         else:
             print("ERROR- check the camp code.")
-        t.sleep(3)
-        print('\n\n')
-        location(choice_sequence(intro='What would you like to do next?\n',
-                                 choices=['Leave camp', 'Save your progress'],
-                                 results=['Wilds', 'Save Screen']))
-
-    # Your general non-base area
-    if area == "Wilds":
-        location(choice_sequence(intro='You are in the wilds.\n',
-                                 choices=['Look for a fight.', 'Go to camp', 'Explore'],
-                                 results=['Fight', 'Camp', 'Wilds']))
+        print('\n')
+        location('Camp')
 
     # Save progress
-    if area == "Save Screen":
+    if area == 'Save Screen':
         import pickle
         pickle_out = open('TBA_Save.pickle', 'wb')
         pickle.dump(you, pickle_out)
@@ -72,13 +75,18 @@ def location(area):
         print('Your stats have been saved.')
         location('Camp')
 
+    # Inventory Screen
+    if area == 'Inventory Screen':
+        for item in you.inventory:
+            print(f'{item.quantity} {item.name}')
+        location('Camp')
     # Look for a fight
-    if area == "Fight":
-        enemy_list = ['field mouse', 'wild hog']
+    if area == "Fight Zone: 1":
+        enemy_list = ['field mouse', 'wild hog', 'scrawny wolf']
         from Fight_Sequence import battle
         print("You begin searching for a foe...")
         t.sleep(3)
-        enemy = str(r.choices(enemy_list, [0.85, 0.15])).strip('[]')
+        enemy = str(r.choices(enemy_list, [0.85, 0.15, 0.05])).strip('[]')
         battle(enemy[1:-1])
 
 

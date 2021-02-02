@@ -18,4 +18,5 @@ elif new_or_load.upper() == 'N':
     print('\nStarting a new game...\n')
 
 # print(you.current_stats(), you.level)
-location('Camp')
+# location('Camp')
+location('Fight Zone: 1')

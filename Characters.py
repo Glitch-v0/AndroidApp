@@ -1,10 +1,10 @@
 import time as t
 import random as r
-
+from Items import *
 
 class Character:
     def __init__(self, level, strength, luck, charisma, current_health, max_health, experience_to_level, current_exp,
-                 gold, items, name, gender, attacks):
+                 gold, inventory, name, gender, attacks, weapon, armor):
         self.strength = strength
         self.luck = luck
         self.charisma = charisma
@@ -14,10 +14,12 @@ class Character:
         self.experience_to_level = experience_to_level
         self.current_exp = current_exp
         self.gold = gold
-        self.items = items
+        self.inventory = inventory
         self.name = name
         self.gender = gender
         self.attacks = attacks
+        self.weapon = weapon
+        self.armor = armor
 
     def current_stats(self):
         print(f"\nYour Stats:")
@@ -65,34 +67,48 @@ class Enemies:
         self.gender = gender
         self.attacks = attacks
 
+    def gold_drop(self, odds, amount_range):
+        gold_chance = r.sample(range(1, odds), 1)
+        if 1 in gold_chance:
+            self.gold += r.randint(amount_range[0], amount_range[1])
+            return self.gold
+
+
+
     # Enemy Lists
     def enemy_creation(self):
         if self == "field mouse":
-            # 1/3 chance to drop a gold coin
-            gold_chance = r.sample(range(1, 4), 1)
-            field_mouse = Enemies(level=1, strength=1, luck=2, charisma=5,
+            field_mouse = Enemies(level=1, strength=1, luck=3, charisma=5,
                                   max_health=4, current_health=4,
-                                  exp=5, gold=0, items="",
+                                  exp=5, gold=0, items=[mouse_tail],
                                   name="a common field mouse", gender="it",
                                   attacks=['bit', 'gnawed'])
-            if 1 in gold_chance:
-                field_mouse.gold += r.randint(1, 2)
+            # 1/3 chance (4), 1-2 gold
+            Enemies.gold_drop(field_mouse, 4, (1, 2))
             return field_mouse
         if self == "wild hog":
-            # 1/3 chance to drop 1-4 gold coins
-            gold_chance = r.sample(range(1, 4), 1)
-            wild_hog = Enemies(level=3, strength=3, luck=1, charisma=4,
+            wild_hog = Enemies(level=3, strength=3, luck=2, charisma=4,
                                max_health=16, current_health=16,
-                               exp=15, gold=0, items="",
+                               exp=15, gold=0, items=[hog_hide],
                                name="a wild hog", gender="it",
                                attacks=['charged', 'stabbed'])
-            if 1 in gold_chance:
-                wild_hog.gold += r.randint(1, 4)
+            # 1/3 chance (4), 2-4 gold
+            Enemies.gold_drop(wild_hog, 4, (2, 4))
             return wild_hog
+        if self == "scrawny wolf":
+            scrawny_wolf = Enemies(level=5, strength=4, luck=3, charisma=3,
+                                   max_health=25, current_health=25,
+                                   exp=25, gold=0, items=[wolf_hide],
+                                   name="a scrawny wolf", gender="it",
+                                   attacks=['bit', 'chomped', 'charged'])
+            # 1/4 chance (5), 4-12 gold
+            Enemies.gold_drop(scrawny_wolf, 5, (4, 12))
+            return scrawny_wolf
 
 
 you = Character(strength=1, luck=1, charisma=1,
                 current_health=25, max_health=25,
                 experience_to_level=25, current_exp=0, level=1,
-                gold=0, items="", name="Nathan", gender="M",
-                attacks=['punched', 'kicked'])
+                gold=0, inventory=[], name="Nathan", gender="M",
+                attacks=['punched', 'kicked'],
+                weapon=0, armor=0)

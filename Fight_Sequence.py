@@ -4,10 +4,27 @@ import sys
 
 from Characters import Enemies, you
 from Events import choice_sequence
+from Items import *
 
 
 def fight(foe):
     foe_name_proper = str(foe.name).capitalize()
+
+    def item_drop(foe):
+        loot = []
+        for item in foe.items:
+            rarity_roll = r.random()
+            if rarity_roll >= 1 - item.rarity:
+                loot.append(item)
+        return loot
+
+    def add_to_inventory(loot):
+        for item in loot:
+            if item in you.inventory:
+                item.quantity += 1
+            else:
+                you.inventory.append(item)
+        print(f"{str(foe.name).capitalize()} dropped {item.name}!")
 
     def victory():
         if foe.current_health <= 0:
@@ -20,12 +37,13 @@ def fight(foe):
                     print(f"{foe_name_proper} dropped a single gold coin.")
                 else:
                     print(f"You have looted {foe.gold} gold coins.")
+            add_to_inventory(item_drop(foe))
             print(f"You have gained {foe.exp} experience.\n"
                   f"{you.current_exp}/{you.experience_to_level} experience.\n\n")
             t.sleep(3.5)
             if you.current_exp >= you.experience_to_level:
                 you.level_up()
-            return location('Wilds')
+            return location('Wilds: 1')
 
     def defeat():
         if you.current_health <= 0:
@@ -34,9 +52,10 @@ def fight(foe):
 
     def your_turn():
         # -Critical Hit Chance-
+        weapon = you.weapon
         luck_roll = random.sample((range(1, 101)), you.luck)
         miss_roll = random.sample((range(1, 101)), foe.luck)
-        damage_randomness = round(you.strength * random.randint(80, 120) / 100)
+        damage_randomness = round((you.strength + weapon) * random.randint(80, 120) / 100)
         # -Displaying your damage-
         # --Enemy Dodges--
         if 100 in miss_roll and 100 not in luck_roll:
@@ -103,7 +122,7 @@ def fight(foe):
             print('\nYou look for the best way of escape...\n')
             foe_turn()
             print('Found it! Time to go.\n')
-            return location('Wilds')
+            return location('Wilds: 1')
         elif choice == 'F':
             print('\n')
             your_turn()
@@ -111,13 +130,13 @@ def fight(foe):
     fight_choice = choice_sequence(
         intro=f"\nYou have encountered {foe.name}! (Lvl: {foe.level}, HP: {foe.current_health})\n",
         choices=['Run away', 'Auto-fight', 'Tactical Fight'],
-        results=['Wilds', 'Auto', 'Tactical'])
-    if fight_choice == 'Wilds':
+        results=['Wilds: 1', 'Auto', 'Tactical'])
+    if fight_choice == 'Wilds: 1':
         from Events import location
         print('You look for the best route of escape.\n')
         foe_turn()
         print('Found a way out! Time to go.\n')
-        return location('Wilds')
+        return location('Wilds: 1')
     else:
         print(f'You decide to take on {foe.name}.\n')
         auto, turns = True, 0
