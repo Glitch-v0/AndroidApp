@@ -2,9 +2,10 @@ import time as t
 import random as r
 from Items import *
 
+
 class Character:
     def __init__(self, level, strength, luck, charisma, current_health, max_health, experience_to_level, current_exp,
-                 gold, inventory, name, gender, attacks, weapon, armor):
+                 gold, inventory, name, gender, attacks, weapon, armor, explore_points):
         self.strength = strength
         self.luck = luck
         self.charisma = charisma
@@ -20,13 +21,14 @@ class Character:
         self.attacks = attacks
         self.weapon = weapon
         self.armor = armor
+        self.explore_points = explore_points
 
     def current_stats(self):
-        print(f"\nYour Stats:")
-        print(f"Strength = {self.strength}")
-        print(f"Accuracy = {self.luck}")
-        print(f"Evasion = {self.charisma}")
-        print(f"Health = {self.current_health}/{self.max_health}")
+        ["Your Stats:",
+        f"Strength = {self.strength}",
+        f"Luck = {self.luck}",
+        f"Charisma = {self.charisma}",
+        f"Health = {self.current_health}/{self.max_health}"]
 
     def level_up(self):
         self.max_health += 5
@@ -73,8 +75,6 @@ class Enemies:
             self.gold += r.randint(amount_range[0], amount_range[1])
             return self.gold
 
-
-
     # Enemy Lists
     def enemy_creation(self):
         if self == "field mouse":
@@ -111,4 +111,4 @@ you = Character(strength=1, luck=1, charisma=1,
                 experience_to_level=25, current_exp=0, level=1,
                 gold=0, inventory=[], name="Nathan", gender="M",
                 attacks=['punched', 'kicked'],
-                weapon=0, armor=0)
+                weapon=0, armor=0, explore_points=0)

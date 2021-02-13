@@ -3,7 +3,7 @@ import random
 import sys
 
 from Characters import Enemies, you
-from Events import choice_sequence
+# from Events import choice_sequence
 from Items import *
 
 
